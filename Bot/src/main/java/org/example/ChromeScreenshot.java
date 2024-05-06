@@ -57,7 +57,7 @@ public class ChromeScreenshot {
 
             try {
                 // Ждать, пока страница полностью загрузится
-                Thread.sleep(3000);
+                Thread.sleep(1500);
 
                 // Поиск элемента для ввода значения "9001036891"
                 String login = user.getKey();
@@ -103,6 +103,8 @@ public class ChromeScreenshot {
             System.out.println(setCompleted);
 // Прогоняем по ссылкам пока не закончит добавление всех задач в Список задач
             while (!setCompleted.equals("Сегодняшнее время истекло '")) {
+                // Проверить работает или нет
+//                if (setCompleted.equals("Неудача")) break;
                 if (driver.getCurrentUrl().equals("https://www.bbdowork07.com/#/MyTask")) {
                     driver.navigate().back();
                 }
@@ -130,146 +132,150 @@ public class ChromeScreenshot {
             // Переходим в список задач
             driver.get("https://www.bbdowork07.com/#/mytask");
             Thread.sleep(2000);
-            List<WebElement> elements_1;
 
-            try {
-                elements_1 = driver.findElements(By.className("van-button--small"));
-            } catch (Exception ex) {
-                elements_1 = driver.findElements(By.className("van-button--small"));
-            }
-
-            // Проходим по каждой задаче
-            for (WebElement element : elements_1) {
-                Thread.sleep(3000);
+            List<WebElement> elements_1 = driver.findElements(By.className("van-button--small"));
+            while (!elements_1.isEmpty()) {
                 try {
-                    element.click();
-                } catch (StaleElementReferenceException ex) {
-                    element = driver.findElement(By.className("van-button--small"));
+                    elements_1 = driver.findElements(By.className("van-button--small"));
+                } catch (Exception ex) {
+                    elements_1 = driver.findElements(By.className("van-button--small"));
+                }
+
+                // Проходим по каждой задаче
+                for (WebElement element : elements_1) {
+                    Thread.sleep(1500);
                     try {
                         element.click();
+                    } catch (StaleElementReferenceException ex) {
+                        element = driver.findElement(By.className("van-button--small"));
+                        try {
+                            element.click();
+                        } catch (Exception ignored) {
+
+                        }
+                    }
+
+                    try {
+                        WebElement youtubeReference = driver.findElement(By.className("van-button--mini"));
+                        youtubeReference.click();
+
+                    } catch (StaleElementReferenceException e) {
+                        WebElement youtubeReference = driver.findElement(By.className("van-button--mini"));
+                        youtubeReference.click();
+                    }
+
+                    Thread.sleep(3000);
+
+                    Set<String> handles = driver.getWindowHandles();
+                    for (String handle : handles) {
+                        driver.switchTo().window(handle);
+                    }
+
+                    try {
+                        // Авторизация в гугл
+                        Thread.sleep(2000);
+                        WebElement loginButton = driver.findElement(By.xpath("//a[@aria-label='Войти']"));
+                        loginButton.click();
+                        Map<String, String> gmailUsers = new HashMap<>();
+                        gmailUsers.put("Fademon2019@gmail.com", "Noyser123");
+
+                        for (Map.Entry<String, String> gmailUser : gmailUsers.entrySet()) {
+                            WebElement loginGmail = driver.findElement(By.xpath("//input[@autocomplete='username']"));
+                            for (char c : gmailUser.getKey().toCharArray()) {
+                                loginGmail.sendKeys(String.valueOf(c));
+                                Thread.sleep(10); // Пауза между вводом символов
+                            }
+                            loginGmail.click();
+                            loginGmail.sendKeys(Keys.TAB);
+                            WebElement temp = driver.switchTo().activeElement();
+                            temp.sendKeys(Keys.TAB);
+                            WebElement temp2 = driver.switchTo().activeElement();
+                            temp2.sendKeys(Keys.TAB);
+                            WebElement nextBTN = driver.switchTo().activeElement();
+                            nextBTN.click();
+
+                            Thread.sleep(3000);
+                            //  Ввод пароля
+                            WebElement passwordGmail = driver.findElement(By.xpath("//input[@autocomplete='current-password']"));
+
+                            for (char c : gmailUser.getValue().toCharArray()) {
+                                passwordGmail.sendKeys(String.valueOf(c));
+                                Thread.sleep(10); // Пауза между вводом символов
+                            }
+                            // Кликаем на кнопки авторизации всякие...
+                            passwordGmail.sendKeys(Keys.TAB);
+                            WebElement passTemp = driver.switchTo().activeElement();
+                            passTemp.sendKeys(Keys.TAB);
+                            WebElement nextPassBTN = driver.switchTo().activeElement();
+                            nextPassBTN.click();
+                        }
+                    } catch (Exception ignored) {
+                    }
+
+
+                    Thread.sleep(3000);
+                    String currentUrl = driver.getCurrentUrl();
+                    System.out.println("Текущая страница: " + currentUrl);
+                    Thread.sleep(3000);
+                    // лайкаем видео
+                    WebElement likeBTN = driver.findElement(By.xpath("//button[@aria-pressed='false']"));
+                    Thread.sleep(2000);
+                    try {
+                        likeBTN.click();
                     } catch (Exception ignored) {
 
                     }
-                }
 
-                try {
-                    WebElement youtubeReference = driver.findElement(By.className("van-button--mini"));
-                    youtubeReference.click();
 
-                } catch (StaleElementReferenceException e) {
-                    WebElement youtubeReference = driver.findElement(By.className("van-button--mini"));
-                    youtubeReference.click();
-                }
+                    System.out.println("Good");
+                    // Делаем скрин с сохранением в папку
+                    Thread.sleep(3000);
+                    TakesScreenshot screenshot = (TakesScreenshot) driver;
 
-                Thread.sleep(3000);
+                    // Создаем объект файла для сохранения скриншота
+                    File srcFile = screenshot.getScreenshotAs(OutputType.FILE);
 
-                Set<String> handles = driver.getWindowHandles();
-                for (String handle : handles) {
-                    driver.switchTo().window(handle);
-                }
+                    // Указываем путь для сохранения скриншота
+                    String filePath = "src\\main\\resources\\Screenshots\\screenshot.png";
 
-                try {
-                    // Авторизация в гугл
-                    Thread.sleep(2000);
-                    WebElement loginButton = driver.findElement(By.xpath("//a[@aria-label='Войти']"));
-                    loginButton.click();
-                    Map<String, String> gmailUsers = new HashMap<>();
-                    gmailUsers.put("Fademon2019@gmail.com", "Noyser123");
-
-                    for (Map.Entry<String, String> gmailUser : gmailUsers.entrySet()) {
-                        WebElement loginGmail = driver.findElement(By.xpath("//input[@autocomplete='username']"));
-                        for (char c : gmailUser.getKey().toCharArray()) {
-                            loginGmail.sendKeys(String.valueOf(c));
-                            Thread.sleep(10); // Пауза между вводом символов
-                        }
-                        loginGmail.click();
-                        loginGmail.sendKeys(Keys.TAB);
-                        WebElement temp = driver.switchTo().activeElement();
-                        temp.sendKeys(Keys.TAB);
-                        WebElement temp2 = driver.switchTo().activeElement();
-                        temp2.sendKeys(Keys.TAB);
-                        WebElement nextBTN = driver.switchTo().activeElement();
-                        nextBTN.click();
-
-                        Thread.sleep(3000);
-                        //  Ввод пароля
-                        WebElement passwordGmail = driver.findElement(By.xpath("//input[@autocomplete='current-password']"));
-
-                        for (char c : gmailUser.getValue().toCharArray()) {
-                            passwordGmail.sendKeys(String.valueOf(c));
-                            Thread.sleep(10); // Пауза между вводом символов
-                        }
-                        // Кликаем на кнопки авторизации всякие...
-                        passwordGmail.sendKeys(Keys.TAB);
-                        WebElement passTemp = driver.switchTo().activeElement();
-                        passTemp.sendKeys(Keys.TAB);
-                        WebElement nextPassBTN = driver.switchTo().activeElement();
-                        nextPassBTN.click();
+                    try {
+                        // Копируем содержимое файла скриншота в указанное расположение
+                        FileUtils.copyFile(srcFile, new File(filePath));
+                        Files.copy(srcFile.toPath(), Path.of(filePath), StandardCopyOption.REPLACE_EXISTING);
+                        System.out.println("Скриншот успешно сохранен по пути: " + filePath);
+                        likeBTN.click();
+                    } catch (IOException e) {
+                        System.out.println("Произошла ошибка при сохранении скриншота: " + e.getMessage());
                     }
-                } catch (Exception ignored) {
+                    ((JavascriptExecutor) driver).executeScript("window.close();");
+                    handles = driver.getWindowHandles();
+                    for (String handle : handles) {
+                        driver.switchTo().window(handle);
+                    }
+                    Thread.sleep(1000);
+
+                    currentUrl = driver.getCurrentUrl();
+                    System.out.println("Текущая страница: " + currentUrl);
+
+                    WebElement upload = driver.findElement(By.className("van-uploader__upload"));
+                    upload.click();
+                    //--------------------- тут загрузка файла на проверку -----------------------//
+                    Thread.sleep(2000);
+
+                    String scriptFileExe = "src/main/resources/loaderScript.exe";
+
+                    ProcessBuilder processBuilder = new ProcessBuilder(scriptFileExe);
+                    Process process = processBuilder.start();
+                    process.waitFor();
+                    Thread.sleep(1000);
+
+                    WebElement uploader = driver.findElement(By.className("cpButton1"));
+                    Thread.sleep(1000);
+                    uploader.click();
+                    Thread.sleep(1000);
+
+                    driver.navigate().refresh();
                 }
-
-
-                Thread.sleep(3000);
-                String currentUrl = driver.getCurrentUrl();
-                System.out.println("Текущая страница: " + currentUrl);
-                Thread.sleep(3000);
-                // лайкаем видео
-                WebElement likeBTN = driver.findElement(By.xpath("//button[@aria-pressed='false']"));
-                Thread.sleep(2000);
-                try {
-                    likeBTN.click();
-                } catch (Exception ignored) {
-
-                }
-
-
-                System.out.println("Good");
-                // Делаем скрин с сохранением в папку
-                Thread.sleep(3000);
-                TakesScreenshot screenshot = (TakesScreenshot) driver;
-
-                // Создаем объект файла для сохранения скриншота
-                File srcFile = screenshot.getScreenshotAs(OutputType.FILE);
-
-                // Указываем путь для сохранения скриншота
-                String filePath = "src\\main\\resources\\Screenshots\\screenshot.png";
-
-                try {
-                    // Копируем содержимое файла скриншота в указанное расположение
-                    FileUtils.copyFile(srcFile, new File(filePath));
-                    Files.copy(srcFile.toPath(), Path.of(filePath), StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println("Скриншот успешно сохранен по пути: " + filePath);
-                    likeBTN.click();
-                } catch (IOException e) {
-                    System.out.println("Произошла ошибка при сохранении скриншота: " + e.getMessage());
-                }
-                ((JavascriptExecutor) driver).executeScript("window.close();");
-                handles = driver.getWindowHandles();
-                for (String handle : handles) {
-                    driver.switchTo().window(handle);
-                }
-                Thread.sleep(3000);
-
-                currentUrl = driver.getCurrentUrl();
-                System.out.println("Текущая страница: " + currentUrl);
-
-                WebElement upload = driver.findElement(By.className("van-uploader__upload"));
-                upload.click();
-                //--------------------- тут загрузка файла на проверку -----------------------//
-                Thread.sleep(2000);
-
-                String scriptFileExe = "src/main/resources/loaderScript.exe";
-
-                ProcessBuilder processBuilder = new ProcessBuilder(scriptFileExe);
-                Process process = processBuilder.start();
-                process.waitFor();
-                Thread.sleep(3000);
-
-                WebElement uploader = driver.findElement(By.className("cpButton1"));
-                Thread.sleep(3000);
-                uploader.click();
-                Thread.sleep(3000);
             }
             System.out.println("ERR");
             driver.quit();
