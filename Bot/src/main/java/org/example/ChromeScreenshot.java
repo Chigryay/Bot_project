@@ -46,7 +46,6 @@ public class ChromeScreenshot {
         users.put("9001036891", "Noyser123");
 //        users.put("9960394762", "Noyser123");
 //        users.put("9001036891", "Noyser123");
-        int iter = 0;
 
             for (Map.Entry<String, String> user : users.entrySet()) {
                 // станавливаем драйвер
